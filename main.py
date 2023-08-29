@@ -97,15 +97,15 @@ tags_metadata = [
 ]
 
 description = """
-## ABLELabs API helps you do awesome stuff. 🚀
+## ABLE Labs API helps you do awesome stuff. 🚀
 """
 
 app = FastAPI(
-    title="ABLELabs API",
+    title="ABLE Labs API",
     description=description,
     version="0.0.1",
     contact={
-        "name": "ABLELabs",
+        "name": "ABLE Labs",
         "url": "https://ablelabsinc.com/en/home/",
         "email": "sophie@ablelabsinc.com",
     },
