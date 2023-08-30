@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Annotated
 
 
 class Pipette(BaseModel):
@@ -97,7 +97,9 @@ tags_metadata = [
 ]
 
 description = """
-## ABLE Labs Notable API helps you do awesome stuff. 🚀
+## Please note that the current API is provided as an example for discussing input and output formats.  
+## The actual input and output values are subject to change based on mutual discussions and will be finalized at a later date.
+## The overall structure of the API will be added at a later date, and proactive feedback is always welcome.
 """
 
 app = FastAPI(
@@ -122,7 +124,29 @@ app = FastAPI(
 
 
 @app.post("/hw_status", tags=["HW Control"])
-def set_hw_status(hw_status: HW_Status):
+def set_hw_status(
+    hw_status: Annotated[
+        HW_Status,
+        Body(
+            openapi_examples={
+                "led on": {
+                    "summary": "led on example",
+                    "value": {
+                        "hw": "led",
+                        "status": True,
+                    },
+                },
+                "safety_lock off": {
+                    "summary": "safety_lock off example",
+                    "value": {
+                        "hw": "safety_lock",
+                        "status": False,
+                    },
+                },
+            },
+        ),
+    ],
+):
     return f"{hw_status} Set Complete"
 
 
@@ -159,7 +183,37 @@ def get_labware_info():
 
 
 @app.post("/preparation_info", tags=["Preparation"])
-def set_preparation_info(preparation_info: Preparation_Info):
+def set_preparation_info(
+    preparation_info: Annotated[
+        Preparation_Info,
+        Body(
+            examples=[
+                {
+                    "pipette": [
+                        {"pipette_position": "left", "code": "8ch200p"},
+                    ],
+                    "deck": [
+                        {
+                            "deck_number": 1,
+                            "code": "tiprack_ablelabs_200tip",
+                            "available_tip": [
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                            ],
+                        },
+                        {"deck_number": 2, "code": "spl_96wellplate"},
+                    ],
+                },
+            ],
+        ),
+    ],
+):
     return preparation_info
 
 
@@ -172,7 +226,83 @@ def set_preparation_info(preparation_info: Preparation_Info):
 
 
 @app.post("/step_info", tags=["Step"])
-def set_step_info(step_info: Step_Info):
+def set_step_info(
+    step_info: Annotated[
+        Step_Info,
+        Body(
+            examples=[
+                {
+                    "step_number": 1,
+                    "step_name": "transfer",
+                    "pipette_position": "left",
+                    "volume": 100.0,
+                    "transfer_method": "single",
+                    "pipette_route": "serial",
+                    "prevent_contam": False,
+                    "reuse_tip": False,
+                    "source": [
+                        {
+                            "deck_number": 5,
+                            "well": [
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                            ],
+                            "pre_wet": False,
+                            "tip_depth": 0,
+                            "aspirate_speed": 0,
+                            "pre_mix": {
+                                "mix_volume": 0.0,
+                                "mix_iteration": 0,
+                                "mix_speed": 100,
+                                "mix_delay": 0.0,
+                            },
+                            "pause_pipette": {
+                                "height": 0.0,
+                                "z_speed": 0,
+                                "duration": 2.0,
+                            },
+                        }
+                    ],
+                    "target": [
+                        {
+                            "deck_number": 6,
+                            "well": [
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                                "111111111111",
+                            ],
+                            "tip_depth": 0,
+                            "post_mix": {
+                                "mix_volume": 0.0,
+                                "mix_iteration": 0,
+                                "mix_speed": 100,
+                                "mix_delay": 0.0,
+                            },
+                            "dispense_speed": 0,
+                            "pause_pipette": {
+                                "height": 0.0,
+                                "z_speed": 0,
+                                "duration": 2.0,
+                            },
+                            "blowout": "trash",
+                        },
+                    ],
+                },
+            ],
+        ),
+    ],
+):
     return step_info
 
 
@@ -182,7 +312,18 @@ def set_step_info(step_info: Step_Info):
 
 
 @app.post("/step_available", tags=["Step"])
-def get_step_available(step_number: Step_Number):
+def get_step_available(
+    step_number: Annotated[
+        Step_Number,
+        Body(
+            examples=[
+                {
+                    "step_number": 1,
+                },
+            ],
+        ),
+    ],
+):
     if step_number.step_number == 1:
         return {
             "step_number": step_number.step_number,
@@ -211,7 +352,18 @@ def get_step_available(step_number: Step_Number):
 
 
 @app.post("/step_estimation_time", tags=["Step"])
-def get_step_estimation_time(step_number: Step_Number):
+def get_step_estimation_time(
+    step_number: Annotated[
+        Step_Number,
+        Body(
+            examples=[
+                {
+                    "step_number": 1,
+                },
+            ],
+        ),
+    ],
+):
     return {"step_number": step_number.step_number, "estimated_time": "00:00:05"}
 
 
@@ -219,5 +371,37 @@ def get_step_estimation_time(step_number: Step_Number):
 
 
 @app.post("/run_status", tags=["Run"])
-def set_run_status(status: Run_Status):
+def set_run_status(
+    status: Annotated[
+        Run_Status,
+        Body(
+            openapi_examples={
+                "run": {
+                    "summary": "run example",
+                    "value": {
+                        "status": "run",
+                    },
+                },
+                "pause": {
+                    "summary": "pause example",
+                    "value": {
+                        "status": "pause",
+                    },
+                },
+                "stop": {
+                    "summary": "stop example",
+                    "value": {
+                        "status": "stop",
+                    },
+                },
+                "resume": {
+                    "summary": "resume example",
+                    "value": {
+                        "status": "resume",
+                    },
+                },
+            },
+        ),
+    ],
+):
     return status
