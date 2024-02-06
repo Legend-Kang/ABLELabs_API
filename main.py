@@ -97,9 +97,9 @@ tags_metadata = [
 ]
 
 description = """
-## Please note that the current API is provided as an example for discussing input and output formats.  
-## The actual input and output values are subject to change based on mutual discussions and will be finalized at a later date.
-## The overall structure of the API will be added at a later date, and proactive feedback is always welcome.
+### Please note that the current API is provided as an example for discussing input and output formats.  
+### The actual input and output values are subject to change based on mutual discussions and will be finalized at a later date.
+### The overall structure of the API will be added at a later date, and proactive feedback is always welcome.
 """
 
 app = FastAPI(
